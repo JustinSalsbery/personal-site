@@ -1,0 +1,124 @@
+/* Justin Salsbery
+   10-24-22 */
+
+:root {
+   --primary: rgb(245,245,245);
+   --secondary: rgb(35,35,35);
+   --highlight: rgb(90, 125, 255);
+}
+
+html {
+   scroll-behavior: smooth;
+}
+
+* {
+   all: unset;
+   font-family: sans-serif;
+}
+
+title {
+   display: none;
+}
+
+header {
+   color: var(--primary);
+   background-color: var(--secondary);
+
+   position:fixed;
+   height: 5rem;
+   width: 100vw;
+
+   display: flex;
+   justify-content: space-between;
+   align-items: flex-end;
+}
+
+#header-left, #header-right {
+   display: flex;
+   padding: 0 1rem;
+   gap: 1rem;
+}
+
+body {
+   color: var(--secondary);
+   background-color: var(--primary);
+}
+
+header h1 {
+   font-size: x-large;
+}
+
+header h2 {
+   font-size: larger;
+}
+
+a:hover {
+   color: var(--highlight);
+}
+
+#content {
+   margin: 6rem auto;
+   width: 36rem;
+   max-width: calc(100vw - 2rem);
+
+   display: flex;
+   flex-direction: column;
+}
+
+#content div {
+   margin: 1rem 0;
+}
+
+#content-about-me, #content-personal-projects {
+   scroll-margin-block-start: 6rem;   
+   scroll-margin-block-end: 6rem;
+}
+
+#content h2 {
+   font-size: x-large;
+   margin-right: 1rem;
+}
+
+#content h3 {
+   font-size: large;
+   display: block;
+   margin-top: 1rem;
+}
+
+#content .display-inline {
+   display: inline;
+}
+
+p {
+   display: block;
+}
+
+hr {
+   border: 0.1rem solid var(--secondary);
+   border-radius: 0.1rem;
+}
+
+#content-game {
+   display: flex;
+   flex-direction: column;
+
+   background-color: var(--secondary);
+   color: var(--primary);
+   border-radius: 1rem;
+
+   height: 26rem;
+   padding: 1rem;
+}
+
+#content #content-game * {
+   padding: 0;
+   margin: 0;
+}
+
+#content-game-top {
+   overflow: scroll;
+}
+
+#content-game-bottom-shell:focus {
+   cursor: text;
+}
