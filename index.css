@@ -116,7 +116,15 @@ hr {
 }
 
 #content-game-top {
-   overflow: scroll;
+   overflow-y: scroll;
+   overflow-x: hidden;
+   scrollbar-width: none; 
+   text-overflow: ellipsis;
+   white-space: nowrap;
+}
+
+#content-game-top::-webkit-scrollbar {
+   display: none;
 }
 
 #content-game-bottom-shell {

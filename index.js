@@ -6,8 +6,6 @@
 /*
 TODO:
 Clear as global
-Hide scroll bar
-Line overlow???
 Print color...
 */
 
