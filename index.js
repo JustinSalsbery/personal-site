@@ -3,56 +3,72 @@
 
 "use strict";
 
+/*
+TODO:
+Clear as global
+Hide scroll bar
+Line overlow???
+Print color...
+*/
+
 // ***************************************************************************
 // SHELL CODE
 // ***************************************************************************
 
-const topShell = document.getElementById("content-game-top");
-const bottomShell = document.getElementById("content-game-bottom-shell");
+const terminal = new class Terminal {
+   constructor(topShell, bottomShell) {
+      this.topShell = topShell;
+      this.bottomShell = bottomShell;
+      this.response = ""; // class variables
 
-document.getElementById("content-game").onclick = function() {
-   bottomShell.focus();
-}
+      Terminal.enterPressed = new Event("enter_pressed"); // static variable
 
-const enterPressed = new Event("enter_pressed");
-let response;
-bottomShell.onkeydown = function(key) {
-   if (key.keyCode == 13) { // 13 == "enter"
-      bottomShell.dispatchEvent(enterPressed);
-      response = bottomShell.value;
-      bottomShell.value = "";
-      printLine("> " + response);
-   }
-}
-
-// Solution modified from Claude at https://stackoverflow.com/questions/6902334/how-to-let-javascript-wait-until-certain-event-happens
-function input() { 
-   return new Promise((resolve) => {
-      const listener = () => {
-         bottomShell.removeEventListener("enter_pressed", listener);
-         resolve();
+      // setup action listeners
+      const self = this; // "this" binds to other values in subsequent function calls
+      document.getElementById("content-game").onclick = function() {
+         self.bottomShell.focus();
       }
-      bottomShell.addEventListener("enter_pressed", listener);
-   })
-}
+      self.bottomShell.onkeydown = function(key) {
+         if (key.keyCode == 13) { // 13 == "enter"
+            self.bottomShell.dispatchEvent(Terminal.enterPressed);
+            self.response = self.bottomShell.value;
+            self.bottomShell.value = "";
+            self.printLine("> " + self.response);
+         }
+      }
+   }
 
-async function read() {
-   await input();
-   return response;
-}
+   // Solution modified from Claude at https://stackoverflow.com/questions/6902334/how-to-let-javascript-wait-until-certain-event-happens
+   input() { 
+      return new Promise((resolve) => {
+         const listener = () => {
+            this.bottomShell.removeEventListener("enter_pressed", listener);
+            resolve();
+         }
+         this.bottomShell.addEventListener("enter_pressed", listener);
+      })
+   }
 
-function print(str) {
-   topShell.innerText += str;
-   topShell.scrollTo(0, topShell.scrollHeight);
-}
+   async read() {
+      await this.input();
+      return this.response;
+   }
 
-function printLine(str) {
-   print(str + "\n");
-}
+   print(str) {
+      this.topShell.innerText += str;
+      this.topShell.scrollTo(0, this.topShell.scrollHeight);
+   }
 
-function clear() {
-   topShell.innerText = "";
-}
+   printLine(str) {
+      this.print(str + "\n");
+   }
+
+   clear() {
+      this.topShell.innerText = "";
+   }
+
+} (document.getElementById("content-game-top"), 
+   document.getElementById("content-game-bottom-shell"));
 
 // ***************************************************************************
 // BLACKJACK GAME
