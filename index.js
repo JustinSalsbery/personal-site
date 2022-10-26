@@ -15,9 +15,13 @@ document.getElementById("content-game").onclick = function() {
 }
 
 const enterPressed = new Event("enter_pressed");
+let response;
 bottomShell.onkeydown = function(key) {
    if (key.keyCode == 13) { // 13 == "enter"
       bottomShell.dispatchEvent(enterPressed);
+      response = bottomShell.value;
+      bottomShell.value = "";
+      printLine("> " + response);
    }
 }
 
@@ -34,10 +38,7 @@ function input() {
 
 async function read() {
    await input();
-   const result = bottomShell.value;
-   bottomShell.value = "";
-   printLine("> " + result);
-   return result;
+   return response;
 }
 
 function print(str) {
