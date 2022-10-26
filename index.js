@@ -5,7 +5,6 @@
 
 /*
 TODO:
-Clear as global
 Print color...
 */
 
@@ -28,10 +27,14 @@ const terminal = new class Terminal {
       }
       self.bottomShell.onkeydown = function(key) {
          if (key.keyCode == 13) { // 13 == "enter"
-            self.bottomShell.dispatchEvent(Terminal.enterPressed);
-            self.response = self.bottomShell.value;
+            if (self.bottomShell.value == "clear") {
+               self.clear();
+            } else {
+               self.bottomShell.dispatchEvent(Terminal.enterPressed);
+               self.response = self.bottomShell.value;
+               self.printLine("> " + self.response);
+            }
             self.bottomShell.value = "";
-            self.printLine("> " + self.response);
          }
       }
    }
