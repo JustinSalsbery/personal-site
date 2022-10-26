@@ -119,6 +119,10 @@ hr {
    overflow: scroll;
 }
 
+#content-game-bottom-shell {
+   width: calc(100% - 2rem);
+}
+
 #content-game-bottom-shell:focus {
    cursor: text;
 }

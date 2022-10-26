@@ -1,11 +1,15 @@
 // Justin Salsbery
 // 10-24-22
 
+// Program not found... Try/Catch
+
+// Can I wait for enter and on enter return the result?
+
 "use strict";
 
 const topShell = document.getElementById("content-game-top");
 const bottomShell = document.getElementById("content-game-bottom-shell");
-let context = 0;
+let context = null;
 
 document.getElementById("content-game").onclick = function() {
    bottomShell.focus();
@@ -15,11 +19,14 @@ bottomShell.onkeydown = function(key) {
    if (key.keyCode == 13) { // 13 == "enter"
       let arg = bottomShell.value;
       terminalPrintLine("> " + arg);
-      if (context == 0) {
-         command(arg);
-      } else if (context == 1) {
-         blackjackMenu(arg);
+
+      const call = context;
+      context = null;
+      if (call !== null) {
+         call(arg);
+         return;
       }
+      command(arg);
    }
 }
 
@@ -32,18 +39,32 @@ function command(arg) {
    } else if (arg == "pwd") {
       terminalPrintLine("/");
    } else if (arg.startsWith("mkdir") || arg.startsWith("touch") 
-   || arg.startsWith("rm") || arg.startsWith("cp") || arg.startsWith("man")) {
+   || arg.startsWith("rm") || arg.startsWith("cp") || arg.startsWith("man")
+   || arg.startsWith("cd")) {
       terminalPrintLine("Access denied");
    } else if (arg.startsWith("echo")) {
       terminalPrintLine(arg.slice(5));
    } else if (arg == "help") {
       terminalPrintLine("Call ./program_name.out");
-   } else if (arg == "./blackjack.out") {
-      context = 1;
-      blackjackMenu(0);
+   } else if (arg.startsWith("./")) {
+      let params = arg.split(" "); 
+      arg = params[0].slice(2); // grab first index, drop "./"
+      arg = arg.split(".")[0]; // grabs all characters until "."
+      params.shift(); // drop first index, first index stored in arg 
+      params.forEach(function(param, index) { // wrap each parameter in quotes
+         params[index] = "\"" + param + "\"";
+      });
+      params = "[" + params + "]"; // handle as an array
+      buildFunctionCall(arg, params);
+   } else if (arg == "" || arg.startsWith(" ")) {
    } else {
       terminalPrintLine("Command not found.");
    }
+}
+
+function buildFunctionCall(fnct, params) {
+   const call = fnct + "(" + params + ");";
+   eval(call); // this isn't "safe" is such matters
 }
 
 function terminalPrint(str) {
@@ -60,25 +81,29 @@ function terminalPrintLine(str) {
 // BLACKJACK GAME
 // ***************************************************************************
 
-let playerHand = 0
-let dealerHand = 0
+function blackjack(args) {
 
-// does not handle aces being either 1 or 11
-// does not handle all faces being 10
-// with this current architecture, this would require a new context
-function drawCard(hand) {
-   hand += Math.floor(1 + (Math.random() * 11));
-   return hand;
 }
 
-function checkPlayerHand() {
-   if (playerHand > 21) {
-      terminalPrintLine("Bad luck. You've lost.")
-      return false;
-   }
-   terminalPrintLine("Your hand is: " + playerHand);
-   return true;
-}
+// let playerHand = 0
+// let dealerHand = 0
+
+// // does not handle aces being either 1 or 11
+// // does not handle all faces being 10
+// // with this current architecture, this would require a new context
+// function drawCard(hand) {
+//    hand += Math.floor(1 + (Math.random() * 11));
+//    return hand;
+// }
+
+// function checkPlayerHand() {
+//    if (playerHand > 21) {
+//       terminalPrintLine("Bad luck. You've lost.")
+//       return false;
+//    }
+//    terminalPrintLine("Your hand is: " + playerHand);
+//    return true;
+// }
 
 function blackjackMenu(arg) {
    if (arg == 0) {
@@ -113,6 +138,8 @@ function blackjackMenu(arg) {
       }
    } else if (arg == 4) { // exit game
       terminalPrintLine("Goodbye!");
-      context = 0;
+      context = null;
    }
 }
+
+blackjackMenu(0);
