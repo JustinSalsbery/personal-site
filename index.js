@@ -3,11 +3,6 @@
 
 "use strict";
 
-/*
-TODO:
-Print color...
-*/
-
 // ***************************************************************************
 // SHELL CODE
 // ***************************************************************************
@@ -32,7 +27,7 @@ const terminal = new class Terminal {
             } else {
                self.bottomShell.dispatchEvent(Terminal.enterPressed);
                self.response = self.bottomShell.value;
-               self.printLine("> " + self.response);
+               self.print("> " + self.response, true);
             }
             self.bottomShell.value = "";
          }
@@ -55,17 +50,26 @@ const terminal = new class Terminal {
       return this.response;
    }
 
-   print(str) {
-      this.topShell.innerText += str;
+   print(str, withNewLine) {
+      if (withNewLine == true) {
+         this.topShell.innerHTML += str + "<br>";
+      } else {
+         this.topShell.innerHTML += str;
+      }
       this.topShell.scrollTo(0, this.topShell.scrollHeight);
    }
 
-   printLine(str) {
-      this.print(str + "\n");
+   printColor(str, hex, withNewLine) {
+      if (withNewLine == true) {
+         this.topShell.innerHTML += `<div style="color:#` + hex + `">${str}</div><br>`;
+      } else {
+         this.topShell.innerHTML += `<div style="color:#` + hex + `">${str}</div>`;
+      }
+      this.topShell.scrollTo(0, this.topShell.scrollHeight);
    }
 
    clear() {
-      this.topShell.innerText = "";
+      this.topShell.innerHTML = "";
    }
 
 } (document.getElementById("content-game-top"), 
