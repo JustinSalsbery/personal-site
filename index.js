@@ -12,8 +12,9 @@ const terminal = new class Terminal {
       this.topShell = topShell;
       this.bottomShell = bottomShell;
       this.lastInput = ""; // class variables
+      this.mode; // 1 - read arrow keys; else - read characters
 
-      Terminal.enterPressed = new Event("enter_pressed"); // static variable
+      Terminal.keyPressed = new Event("key_pressed"); // static variables
 
       // setup action listeners
       const self = this; // "this" binds to other values in subsequent function calls
@@ -21,33 +22,63 @@ const terminal = new class Terminal {
          self.bottomShell.focus();
       }
       self.bottomShell.onkeydown = function(key) {
-         if (key.keyCode == 13) { // 13 == "enter"
-            if (self.bottomShell.value == "clear") {
-               self.clear();
-            } else {
-               self.bottomShell.dispatchEvent(Terminal.enterPressed);
-               self.lastInput = self.bottomShell.value;
-               self.print("> " + self.lastInput, true);
+         if (self.mode == 1) {
+            switch (key.keyCode) {
+               case 13:
+                  self.lastInput = "ENTER";
+                  break;
+               case 37:
+                  self.lastInput = "LEFT";
+                  break;
+               case 38:
+                  self.lastInput = "UP";
+                  break;
+               case 39:
+                  self.lastInput = "RIGHT";
+                  break;
+               case 40:
+                  self.lastInput = "DOWN";
+                  break;
+               default:
+                  self.bottomShell.value = "";
+                  return;
             }
             self.bottomShell.value = "";
+            self.bottomShell.dispatchEvent(Terminal.keyPressed);
+         } else { // DEFAULT mode
+            if (key.keyCode == 13) { // ENTER - 13
+               if (self.bottomShell.value == "clear") {
+                  self.bottomShell.value = "";
+                  self.clear();
+                  return;
+               } else {
+                  self.lastInput = self.bottomShell.value;
+                  self.bottomShell.value = "";
+                  self.print("> " + self.lastInput, true);
+                  self.bottomShell.dispatchEvent(Terminal.keyPressed);
+                  return;
+               }
+            }
          }
       }
    }
 
    // Solution modified from Claude at https://stackoverflow.com/questions/6902334/how-to-let-javascript-wait-until-certain-event-happens
-   async read() {
+   // Modes: 1 - read arrow keys; else - read characters
+   async read(mode) {
+      this.mode = mode;
       await new Promise((resolve) => {
          const listener = () => {
-            this.bottomShell.removeEventListener("enter_pressed", listener);
+            this.bottomShell.removeEventListener("key_pressed", listener);
             resolve();
          }
-         this.bottomShell.addEventListener("enter_pressed", listener);
+         this.bottomShell.addEventListener("key_pressed", listener);
       });
       return this.lastInput;
    }
 
    print(str, withNewLine) {
-      if (withNewLine == true) {
+      if (withNewLine == true) { // must be .innerHTML and not .innerText
          this.topShell.innerHTML += str + "<br>"; // '\n' is <br> in HTML
       } else {
          this.topShell.innerHTML += str;
