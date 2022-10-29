@@ -12,7 +12,7 @@ const terminal = new class Terminal {
       this.topShell = topShell;
       this.bottomShell = bottomShell;
       this.lastInput = ""; // class variables
-      this.mode; // 1 - read arrow keys; else - read characters
+      this.selectionMode; // true - read arrow keys; else - read characters
 
       Terminal.keyPressed = new Event("key_pressed"); // static variables
 
@@ -22,7 +22,7 @@ const terminal = new class Terminal {
          self.bottomShell.focus();
       }
       self.bottomShell.onkeydown = function(key) {
-         if (self.mode == 1) {
+         if (self.selectionMode == true) {
             switch (key.keyCode) {
                case 13:
                   self.lastInput = "ENTER";
@@ -65,8 +65,8 @@ const terminal = new class Terminal {
 
    // Solution modified from Claude at https://stackoverflow.com/questions/6902334/how-to-let-javascript-wait-until-certain-event-happens
    // Modes: 1 - read arrow keys; else - read characters
-   async read(mode) {
-      this.mode = mode;
+   async read(selectionMode) {
+      this.selectionMode = selectionMode;
       await new Promise((resolve) => {
          const listener = () => {
             this.bottomShell.removeEventListener("key_pressed", listener);
@@ -101,6 +101,27 @@ const terminal = new class Terminal {
 
 } (document.getElementById("content-game-top"), 
    document.getElementById("content-game-bottom-shell"));
+
+// ***************************************************************************
+// MENU
+// ***************************************************************************
+(async function() {
+   terminal.print("Hello, welcome to my site!<br>", true);
+   while (true) {
+      terminal.print("Menu options:", true);
+      terminal.print("blackjack - To play a game of blackjack.", true);
+      terminal.print("exit - To exit this menu.", true);
+      switch ((await terminal.read()).toLowerCase()) {
+         case "blackjack":
+            //
+            break;
+         case "exit":
+            return;
+         default:
+      }
+      terminal.clear();
+   }
+})();
 
 // ***************************************************************************
 // BLACKJACK GAME
