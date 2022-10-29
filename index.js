@@ -148,9 +148,11 @@ class Blackjack {
             case "0":
                return;
             case "1":
+               terminal.print("<br>");
                await this.newGame();
                break;
             case "2":
+               terminal.print("<br>");
                if(this.needRestart()) { break; }
                this.hand += await this.hit();
                terminal.print("Current hand: " + this.hand, true);
@@ -160,7 +162,9 @@ class Blackjack {
                }
                break;
             case "3":
+               terminal.print("<br>");
                if(this.needRestart()) { break; }
+               this.dealerDraws();
                break;
             default:
          }
@@ -206,5 +210,34 @@ class Blackjack {
          return true;
       }
       return false;
+   }
+
+   dealerDraws() {
+      let dealer = 0
+      while(dealer < this.hand ||
+         (dealer == this.hand && dealer < 16)) {
+         const card = Math.floor(Math.random()*13+1);
+         if(card == 1) { 
+            if(dealer < 11) { 
+               dealer += 11;
+            } else {
+               dealer += 1;
+            }
+         } else if(card < 11) {
+            dealer += card;
+         } else {
+            dealer += 10;
+         }
+      }
+      terminal.print("You drew: " + this.hand, true);
+      terminal.print("Dealer drew: " + dealer, true);
+      if(dealer == this.hand) {
+         terminal.print("You've tied.", true);
+      } else if(dealer < 22) {
+         terminal.printColor("You've lost...", "ffcccc", true);
+      } else {
+         terminal.printColor("You've won!", "ccffcc", true);
+      }
+      this.hand = 0;
    }
 }
