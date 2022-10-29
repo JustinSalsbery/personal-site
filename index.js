@@ -22,8 +22,8 @@ const terminal = new class Terminal {
          self.bottomShell.focus();
       }
       self.bottomShell.onkeydown = function(key) {
-         if (self.selectionMode == true) {
-            switch (key.keyCode) {
+         if(self.selectionMode == true) {
+            switch(key.keyCode) {
                case 13:
                   self.lastInput = "ENTER";
                   break;
@@ -46,8 +46,8 @@ const terminal = new class Terminal {
             self.bottomShell.value = "";
             self.bottomShell.dispatchEvent(Terminal.keyPressed);
          } else { // DEFAULT mode
-            if (key.keyCode == 13) { // ENTER - 13
-               if (self.bottomShell.value == "clear") {
+            if(key.keyCode == 13) { // ENTER - 13
+               if(self.bottomShell.value == "clear") {
                   self.bottomShell.value = "";
                   self.clear();
                   return;
@@ -78,7 +78,7 @@ const terminal = new class Terminal {
    }
 
    print(str, withNewLine) {
-      if (withNewLine == true) { // must be .innerHTML and not .innerText
+      if(withNewLine == true) { // must be .innerHTML and not .innerText
          this.topShell.innerHTML += str + "<br>"; // '\n' is <br> in HTML
       } else {
          this.topShell.innerHTML += str;
@@ -87,7 +87,7 @@ const terminal = new class Terminal {
    }
 
    printColor(str, hex, withNewLine) { // hex should be a string
-      if (withNewLine == true) {
+      if(withNewLine == true) {
          this.topShell.innerHTML += `<div style="color:#${hex}">${str}</div><br>`;
       } else {
          this.topShell.innerHTML += `<div style="color:#${hex}">${str}</div>`;
@@ -105,17 +105,19 @@ const terminal = new class Terminal {
 // ***************************************************************************
 // MENU
 // ***************************************************************************
+
 (async function() {
    terminal.print("Hello, welcome to my site!<br>", true);
-   while (true) {
+   while(true) {
       terminal.print("Menu options:", true);
       terminal.print("blackjack - To play a game of blackjack.", true);
       terminal.print("exit - To exit this menu.", true);
-      switch ((await terminal.read()).toLowerCase()) {
+      switch((await terminal.read()).toLowerCase()) {
          case "blackjack":
-            //
+            await(new Blackjack()).menu();
             break;
          case "exit":
+            terminal.clear();
             return;
          default:
       }
@@ -127,3 +129,73 @@ const terminal = new class Terminal {
 // BLACKJACK GAME
 // ***************************************************************************
 
+class Blackjack {
+   constructor() {
+      this.hand = 0;
+
+      terminal.clear();
+      terminal.printColor("Blackjack v0.2", "ffcccc", true);
+   }
+
+   async menu() {
+      while(true) {
+         terminal.print("<br>Options:", true);
+         terminal.print("0 - Exit", true);
+         terminal.print("1 - New game", true);
+         terminal.print("2 - Hit", true);
+         terminal.print("3 - Stop", true);
+         switch(await terminal.read()) {
+            case "1":
+               break; 
+            case "2":
+               if(this.needRestart()) { break; }
+               await this.hit();
+               break;
+            case "3":
+               if(this.needRestart()) { break; }
+               break;
+            case "0":
+               return;
+            default:
+         }
+      }
+   }
+
+   async hit() {
+      terminal.print("<br>");
+      const card = Math.floor(Math.random()*13+1);
+      if(card == 1) { // ace is worth either 1 or 11
+         terminal.printColor("Ace drawn!", "ccffcc");
+         terminal.print(" Enter either 1 or 11 ");
+         let input;
+         while((input = await terminal.read()) != "1" && input != "11") {
+            terminal.print("Enter either 1 or 11 ");
+         }
+         return input;
+      } else if(card < 11) { 
+         terminal.print(card + " drawn.", true);
+         return card;
+      } else { // face cards are all worth 10, right?
+         if(card == 11) {
+            terminal.print("Jack drawn.", true);
+         } else if(card == 12) {
+            terminal.print("Queen drawn.", true);
+         } else {
+            terminal.print("King drawn.", true);
+         }
+         return 10;
+      }
+   }
+
+   checkHand() {
+
+   }
+
+   needRestart() {
+      if(hand == 0) { // error checking
+         terminal.print("Please start a new game.", true);
+         return true;
+      }
+      return false;
+   }
+}
