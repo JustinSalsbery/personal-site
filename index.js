@@ -145,33 +145,46 @@ class Blackjack {
          terminal.print("2 - Hit", true);
          terminal.print("3 - Stop", true);
          switch(await terminal.read()) {
+            case "0":
+               return;
             case "1":
-               break; 
+               await this.newGame();
+               break;
             case "2":
                if(this.needRestart()) { break; }
-               await this.hit();
+               this.hand += await this.hit();
+               terminal.print("Current hand: " + this.hand, true);
+               if(this.hand > 21) { 
+                  this.hand = 0;
+                  terminal.printColor("You've lost...", "ffcccc", true);
+               }
                break;
             case "3":
                if(this.needRestart()) { break; }
                break;
-            case "0":
-               return;
             default:
          }
       }
    }
 
+   async newGame() {
+      this.hand = 0;
+      this.hand += await this.hit();
+      this.hand += await this.hit();
+      terminal.print("Current hand: " + this.hand, true);
+   }
+
    async hit() {
-      terminal.print("<br>");
       const card = Math.floor(Math.random()*13+1);
       if(card == 1) { // ace is worth either 1 or 11
+         terminal.print("Current hand: " + this.hand, true);
          terminal.printColor("Ace drawn!", "ccffcc");
          terminal.print(" Enter either 1 or 11 ");
          let input;
          while((input = await terminal.read()) != "1" && input != "11") {
             terminal.print("Enter either 1 or 11 ");
          }
-         return input;
+         return Number(input);
       } else if(card < 11) { 
          terminal.print(card + " drawn.", true);
          return card;
@@ -187,12 +200,8 @@ class Blackjack {
       }
    }
 
-   checkHand() {
-
-   }
-
    needRestart() {
-      if(hand == 0) { // error checking
+      if(this.hand == 0) { // error checking
          terminal.print("Please start a new game.", true);
          return true;
       }
