@@ -1,5 +1,5 @@
 /* Justin Salsbery
-   10-24-22 */
+   4-4-23 */
 
 :root {
    --primary: rgb(245,245,245);
@@ -7,17 +7,22 @@
    --highlight: rgb(90, 125, 255);
 }
 
-html {
-   scroll-behavior: smooth;
-}
-
 * {
    all: unset;
    font-family: sans-serif;
 }
 
+html {
+   scroll-behavior: smooth;
+}
+
 title {
    display: none;
+}
+
+body {
+   color: var(--secondary);
+   background-color: var(--primary);
 }
 
 header {
@@ -39,9 +44,8 @@ header {
    gap: 1rem;
 }
 
-body {
-   color: var(--secondary);
-   background-color: var(--primary);
+a:hover {
+   color: var(--highlight);
 }
 
 header h1 {
@@ -52,10 +56,6 @@ header h2 {
    font-size: larger;
 }
 
-a:hover {
-   color: var(--highlight);
-}
-
 #content {
    margin: 6rem auto;
    width: 36rem;
@@ -63,6 +63,14 @@ a:hover {
 
    display: flex;
    flex-direction: column;
+}
+
+.block {
+   display: block;
+}
+
+.display-inline {
+   display: inline;
 }
 
 #content div {
@@ -81,12 +89,6 @@ a:hover {
 
 #content h3 {
    font-size: large;
-   display: block;
-   margin-top: 1rem;
-}
-
-#content .display-inline {
-   display: inline;
 }
 
 p {
